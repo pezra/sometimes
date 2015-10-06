@@ -76,4 +76,16 @@ class SometimesTest < Test::Unit::TestCase
     end
     assert_equal true, bool
   end
+
+  def test_sometimes_start_strong
+    sometimes = Sometimes.new(probability: 0, start_strong: true)
+
+    i = 0
+    100.times do
+      sometimes.maybe do
+        i += 1
+      end
+    end
+    assert i == 1
+  end
 end

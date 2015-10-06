@@ -20,7 +20,7 @@ require "sometimes/version"
 class Fixnum
   def percent_of_the_time(&block)
     raise(ArgumentError, 'Fixnum should be between 1 and 100 to be used with the times method') unless self > 0 && self <= 100
-    yield if (Kernel.rand(99)+1) <= self
+    Sometimes.new(probability: self.fdiv(100)).maybe(&block)
   end
 end
 
@@ -52,5 +52,33 @@ class Object
 
   def always(&block)
     yield
+  end
+end
+
+# `Sometimes` objects provide work dodging behavior. The block passed to
+# `#maybe` will be executed with the specified probability.
+#
+# If initialized with the `start_strong: true` then object will always execute
+# the block the first time. After that it will revert to is normal work dodging
+# behavior.
+class Sometimes
+
+  protected def initialize(probability: , start_strong: false)
+    @next_run_required = start_strong
+    @probability = probability
+  end
+
+  def maybe(&block)
+    raise "Sometimes needs a job to skip out on." unless block_given?
+    yield if next_run_required? || Kernel.rand() < probability
+    @next_run_required = false
+  end
+
+  protected
+
+  attr_reader :probability
+
+  def next_run_required?
+    @next_run_required
   end
 end

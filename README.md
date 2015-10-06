@@ -83,8 +83,22 @@ always do
   puts "Thanks for sharing!"
 end
 ```
+
+Start strong before slacking off. This always executes the block the first time and then reverts to its normal work dodging behavior. 
+
+```ruby
+did_we_just_meet = Sometimes.new(probability: 0.01, start_strong: true)
+
+did_we_just_meet.maybe do
+  puts "Nice to meet you"
+end
+```
+
+
 ## Why?
 
 This gem was made so [alonetone](http://github.com/sudara/alonetone) could bit more fun when displaying notices and communicating to our users. 
 
 We are human, and have personality. Shouldn't our applications reflect this? Be predictable where it counts. But toss in some spice here and there — it is always a good thing. 
+
+This pattern is also useful for self healing systems where the healing code only runs some percentage of the time.
